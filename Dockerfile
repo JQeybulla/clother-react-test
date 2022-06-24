@@ -1,16 +1,29 @@
-FROM node:13.12.0-alpine as build
+# production
+FROM node:14-alpine as build-stage
+
 WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm ci --silent
-RUN npm install react-scripts@3.4.1 -g --silent
-COPY . ./
+
+# Install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Build
+COPY . .
 RUN npm run build
 
-# production environment
-FROM nginx:stable-alpine
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 3000
+# -----------------------------------------------------------------------------
+# SERVING IMAGE
+FROM fitiavana07/nginx-react
+
+# Copy built files
+COPY --from=build-stage /app/build /usr/share/nginx/html
+
+# 80 for HTTP
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+# Run nginx
+CMD nginx -g 'daemon off;'
+
+#80 for HTTP
+EXPOSE 80
+EXPOSE 443
