@@ -1,0 +1,12 @@
+
+.datas{
+    margin-top: 100px;
+    margin-left: 15%;;
+    width: 70%;
+    display: flex;
+    justify-content: space-around;
+    /*background-color: red;;*/
+}
+.datas span{
+    font-weight: bold;
+}
